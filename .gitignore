@@ -1,0 +1,8 @@
+.idea/*
+source/config/*
+!source/config/*.simple.config.php
+source/*.php~
+source/*.html~
+source/*.js~
+source/*.css~
+
