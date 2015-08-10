@@ -37,7 +37,7 @@ class db_sql_functions
 		return $re;
     }
     
-    /*
+	/*
 	* 获取问题正文
 	* 参数：question_id
 	* 返回值：问题的：content
@@ -49,7 +49,7 @@ class db_sql_functions
 		return $re;
     }
 
-   /*
+	/*
     * 获取问题的标签
     * 参数：question_id
     * 返回值：(array) tags
@@ -254,7 +254,7 @@ class db_sql_functions
 		}
 	}
 	
-   /*
+	/*
 	* 删除“赞”或“踩”
 	* 参数：answer_id, user_id, action(0踩,1赞)
 	* 返回值：(bool) 成功：true, 失败：false
