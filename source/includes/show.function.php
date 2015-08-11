@@ -14,6 +14,7 @@ require_once ('user.class.php');
 
 /*用户信息部分*/
 /*判断用户状态*/
+
 function get_user_status()   //函数返回值为0,说明用户已经登录,否则没有登录
 {
     $user = new user();
