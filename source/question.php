@@ -5,9 +5,14 @@
 	 * 相关说明：$detial(title、content、tags、uid、ctime)
 	 * 			$answers(aid, uid, content, vote, ctime)
 	 */
-
-require_once 'includes/db_function.class.php';
+	 
+require_once 'include/user.class.php';
 require_once 'include/errshow.class.php';
+require_once 'includes/db_function.class.php';
+
+$u = new user();
+$user = $u->user_get_login();
+$smarty->assgin('islogin', $user);
 
 $qid = $_GET['q'];
 
