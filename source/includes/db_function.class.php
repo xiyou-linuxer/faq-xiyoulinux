@@ -2,27 +2,24 @@
 
 require_once 'db.class.php';
 
-class db_sql_functions
+class Db_functions
 {
     public __construct(){
         $dbconn = new \db_class();
+
         return $dbconn;
     }
 
 	/*
-	* 获取问题的标题
+	* 获取问题的标题列表
 	* 参数：start_id(默认为0),limit_num（默认为20）
 	* 返回值：问题title集合, question_id, user_id, answer_time
 	*/
     public function get_question_list($start_id = 0, $limit_num = 20){
-        $sql = "select title, qid, uid, gmt_create_time from app_faq_question limit $start_id, $limit_num"; 
+        $sql = "select title, qid, uid, gmt_create_time from app_faq_question order by gmt_create_time desc limit $start_id, $limit_num"; 
         $re = $dbconn->query($sql);
-		$result = array();
-        while($res = mysql_fetch_array($re)){
-			array_push($result, $res);
-		}
-		
-        return $result;
+
+        return $re;
     }
 
 	/*
@@ -155,30 +152,34 @@ class db_sql_functions
 	public function search_question_title($keyword){
 		$sql = "select title from app_faq_question where binary ucase(title) like concat('%',ucase('$keyword'),'%')";
 		$re = $dbconn->query($sql);
-		$result = array();
-        while($res = mysql_fetch_array($re)){
-			array_push($result, $res);
-		}
 		
-        return $result;
+        return $re;
 	}
 
 
 	/****************************/
 	/*
+	* 获取回复列表
+	* 参数：question_id，start_id(默认为0),limit_num（默认为20）
+	* 返回值：answer_list: (array) aid, uid, content, vote, ctime
+	*/
+	public function get_answer_lists($question_id, $start_id = 0, $limit_num = 20){
+		$sql = "select aid, uid, content, vote, gmt_create_time as ctime from app_faq_answer where qid='$question_id' limit $start_id, $limit_num";
+		$re = $dbconn->query($sql);
+
+        return $re;
+	}
+	
+	/*
 	* 获取回复内容
 	* 参数：question_id
-	* 返回值：answer_lists
+	* 返回值：answer_content_lists
 	*/
 	public function get_answer_comment($question_id){
 		$sql = "select content from app_faq_answer where qid='$question_id'";
 		$re = $dbconn->query($sql);
-		$result = array();
-        while($res = mysql_fetch_array($re)){
-			array_push($result, $res);
-		}
 		
-        return $result;
+        return $re;
 	}
 	
 	/*
@@ -339,12 +340,8 @@ class db_sql_functions
 	public function get_follow_question($user_id){
 		$sql =  "select qid from app_faq_follow where uid=$user_id";
 		$re = $dbconn->query($sql);
-		$result = array();
-        while($res = mysql_fetch_array($re)){
-			array_push($result, $res);
-		}
 		
-        return $result;
+        return $re;
 	}
 	
 	/*
@@ -355,12 +352,8 @@ class db_sql_functions
 	public function get_follow_id($question_id){
 		$sql =  "select uid from app_faq_follow where qid=$question_id";
 		$re = $dbconn->query($sql);
-		$result = array();
-        while($res = mysql_fetch_array($re)){
-			array_push($result, $res);
-		}
 		
-        return $result;
+        return $re;
 	}
 	
 	
@@ -385,12 +378,8 @@ class db_sql_functions
 	public function get_notify($user_id){
 		$sql =  "select nid from app_faq_notify where uid=$user_id";
 		$re = $dbconn->query($sql);
-		$result = array();
-        while($res = mysql_fetch_array($re)){
-			array_push($result, $res);
-		}
 		
-        return $result;
+        return $re;
 	}
 	
 	/*
@@ -413,12 +402,8 @@ class db_sql_functions
 	public function notice_all_user(){
 		$sql =  "select uid from app_faq_follow where qid=$question_id";
 		$re = $dbconn->query($sql);
-		$result = array();
-        while($res = mysql_fetch_array($re)){
-			array_push($result, $res);
-		}
 		
-        return $result;
+        return $re;
 	}
 	
 	
