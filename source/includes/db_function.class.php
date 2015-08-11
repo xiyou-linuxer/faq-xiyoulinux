@@ -9,7 +9,7 @@ class db_sql_functions
         return $dbconn;
     }
 
-    /*
+	/*
 	* 获取问题的标题
 	* 参数：start_id(默认为0),limit_num（默认为20）
 	* 返回值：问题title集合, question_id, user_id, answer_time
@@ -26,17 +26,43 @@ class db_sql_functions
     }
 
 	/*
+	* 获取问题详情
+	* 参数：question_id
+	* 返回值：(array) title、content、tags、uid、ctime
+	*/
+	public function get_question_detial($question_id){
+		$sql = "select title, content, tags, uid, gmt_create_time as ctime from app_faq_question where qid='$question_id'";
+		$re = $dbconn->query($sql);
+		
+		return $re;
+    }
+    
+	/*
 	* 获取问题正文
 	* 参数：question_id
-	* 返回值：问题content
+	* 返回值：问题的：content
 	*/
 	public function get_question_content($question_id){
 		$sql = "select content from app_faq_question where qid='$question_id'";
 		$re = $dbconn->query($sql);
 		
 		return $re;
-	}
-	
+    }
+
+	/*
+    * 获取问题的标签
+    * 参数：question_id
+    * 返回值：(array) tags
+    * 说明：标签之间使用（英文逗号）分隔
+    */ 
+    public function get_question_tags($question_id){
+        $sql = "select tags from app_faq_question where qid='$question_id'";
+        $re = $dbconn->query($sql);
+
+        return explode(',', $re);
+    }
+
+
 	/*
 	* 获取提问的用户
 	* 参数：question_id
@@ -138,7 +164,7 @@ class db_sql_functions
 	}
 
 
-    /****************************/
+	/****************************/
 	/*
 	* 获取回复内容
 	* 参数：question_id
@@ -154,16 +180,6 @@ class db_sql_functions
 		
         return $result;
 	}
-	
-	/*************************************************************************************
-	* 获取“赞”投票数目
-	* 参数：answer_id
-	* 返回值：(int) votes
-	*/
-	public function get_answer_vote($answer_id){
-		$sql = "select content from app_faq_answer where aid='$question_id'";
-	}
-	
 	
 	/*
 	* 获取回复时间
@@ -202,17 +218,29 @@ class db_sql_functions
 		
 	}
 	
-	/*******************************************************************************
-	* 获取踩人数
+	/*
+	* 获取“赞”和“踩”人数
 	* 参数：answer_id
-	* 返回值：(int) votes
+	* 返回值：(array) 下标agree表示“赞”数目，disagree表示“踩”数目
 	*/
-	public function get_step_votenum($answer_id){
-		$sql = "select from app_faq_answer where aid='$answer_id'";
-	}
-	
-	
-	/*******************************************************************************
+	public function get_votenum($answer_id){
+        	$sql = "select vote from app_faq_answer where aid='$answer_id'";
+        	$re = $dbconn->query($sql);
+
+        	$arr = json_decode($re, true);
+        	$count_y = 0;
+        	$count_n = 0;
+        
+        foreach($arr as $key => $value){
+
+            if($value == 1) $count_y ++;
+            else $count_n ++;
+        }
+
+        return array('agree'=>$count_y,'disagree'=>$count_n);
+    }
+
+	/*
 	* 添加“赞”或“踩”
 	* 参数：answer_id, user_id, action(0踩,1赞)
 	* 返回值：(bool) 成功：true, 失败：false
@@ -226,7 +254,7 @@ class db_sql_functions
 		}
 	}
 	
-	/**********************************************************************************
+	/*
 	* 删除“赞”或“踩”
 	* 参数：answer_id, user_id, action(0踩,1赞)
 	* 返回值：(bool) 成功：true, 失败：false
@@ -278,10 +306,6 @@ class db_sql_functions
 		
 		return $re;
 	}
-	
-	
-	
-	
 	
 	/*
 	* 添加关注
@@ -338,8 +362,6 @@ class db_sql_functions
 		
         return $result;
 	}
-	
-	
 	
 	
     /************************************/
@@ -402,39 +424,46 @@ class db_sql_functions
 	
 	/*
 	* json 操作
-	* 参数：answer_id, user_id, action
-	* 返回值：(bool) 成功：true, 失败：false
+	* 参数：answer_id, user_id, action, flag
+    * 返回值：(bool) 成功：true, 失败：false
+    * 说明：flag为1,表示add，反之，为del
 	*/
 	public function json_vote($answer_id, $user_id, $action, $flag){
 		$sql = "select vote from app_faq_answer where aid=$answer_id and uid =$uid";
-		$re = $dbconn->query($sql);
-		if($flag){ //add
-			$obj = json_decode($re);
-			foreach($obj as $unit){
-                if(!isset($unit->$user_id)){
-                    //add
-                    $add_vote = "'$user_id':'1'";
-                    array_push($obj, $add_vote);
-                    $json = json_encode($obj);
+        $re = $dbconn->query($sql);
+
+        $arr = json_decode($re, true);
+        foreach($arr as $key => $value){
+
+            if($key == $user_id){
+
+                if($flag){  //找到key && flag == 1,即添加失败
+
+                    return false;
+                }else{  //找到key && flag == 0,进行删除操作
+                    
+                    unset($arr[$key]);
+                    $json = json_encode($arr);
                     $sql = "update app_faq_answer set vote='$json' where aid=$answer_id and uid=$uid";
                     $dbconn->query($sql);
-                    return true;
 
-                }else{
-                    return false;
+                    return true;
                 }
-			}
-		}else{  //del
-			$obj = json_decode($re);
-			foreach($obj as $unit){
-				if($unit->$user_id){
-					
-				}
-			}
-		}
-		
-		
-	}
-}
+
+            }
+        }
+        if($flag){  //未找到key && flag == 1,则添加
+                
+            $add_vote = array($user_id => '1');
+            array_push($arr, $add_vote);
+            $json = json_encode($arr);
+            $sql = "update app_faq_answer set vote='$json' where aid=$answer_id and uid=$uid";
+            $dbconn->query($sql);
+                
+            return true;
+        }else{  //未找到key && flag == 0,即删除失败
+
+            return false;
+        }
 
 ?>
