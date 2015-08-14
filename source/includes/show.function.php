@@ -9,9 +9,6 @@
 
 /*根据各个页面的相同的部分抽象出来的共同的函数*/
 
-require_once('db_function.class.php');
-require_once ('user.class.php');
-
 /*用户信息部分*/
 /*判断用户状态*/
 
@@ -28,13 +25,8 @@ function get_user_status()   //函数返回值为0,说明用户已经登录,否�
 function get_user_info()    //如果用户已经登录,返回用用户的信息,如果没有登录,返回NULL
 {
     $user = new user();
-    $temp = get_user_login();
-    if ($temp == 0) {
-        $user_info = json_decode($user->user_getinfo()); //user_info展示登录用户的详细信息,name表示姓名,sex表示性别,images表示头像
-    } else {
-        $user_info = NULL;  //如果用户没有登录,用户的信息为空
-    }
-    return $user_info;
+    $temp = json_decode($user->user_get_login());
+    return $temp;
 }
 
 

@@ -4,6 +4,7 @@
  * @author connect@qq.com
  * @copyright © 2013, Tencent Corporation. All rights reserved.
  */
+require_once "../config/oauth.config.php";
 
 class oauth{
 

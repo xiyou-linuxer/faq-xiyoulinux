@@ -6,12 +6,12 @@
  * Date: 2015/8/13
  * Time: 14:30
  */
-require_once "oauth.class.php";
-require_once "db_function.class.php";
+
+//require_once "db_function.class.php";
 
 class user
 {
-    private $ret;//×´Ì¬
+    private $ret;//çŠ¶æ€
     private $userid;
     private $name;
     private $sex;
@@ -19,7 +19,7 @@ class user
     private $db;
 
     function __construct(){
-        if(isset($_SESSION['userid']) && ($_SESSION['userid'] != 0)){
+        if(isset($_SESSION['userid'])){
             $this->userid = $_SESSION['userid'];
             $this->name = $_SESSION['name'];
             $this->sex = $_SESSION['sex'];
@@ -33,21 +33,21 @@ class user
         $this->db = new db_sql_functions();
     }
 
-    //Ìø×ªQQÑéÖ¤ÓÃ»§µÇÂ½ĞÅÏ¢£¬ÑéÖ¤³É¹¦·µ»Øture ·ñÔò·µ»Øfalse
+    //è·³è½¬QQéªŒè¯ç”¨æˆ·ç™»é™†ä¿¡æ¯ï¼ŒéªŒè¯æˆåŠŸè¿”å›ture å¦åˆ™è¿”å›false
     public function user_login_qq(){
         header("Location:/oauth/login.php");
         return true;
     }
 
-    //Ìø×ªÄÚ²¿Æ½Ì¨ÑéÖ¤ÓÃ»§µÇÂ½ĞÅÏ¢£¬ÑéÖ¤³É¹¦·µ»Øture ·ñÔò·µ»Øfalse
+    //è·³è½¬å†…éƒ¨å¹³å°éªŒè¯ç”¨æˆ·ç™»é™†ä¿¡æ¯ï¼ŒéªŒè¯æˆåŠŸè¿”å›ture å¦åˆ™è¿”å›false
     public function user_login_linux(){
         return false;
     }
 
-    //ÍË³öµ±Ç°ÓÃ»§£¬³É¹¦·µ»Øture ·ñÔò·µ»Øfalse
+    //é€€å‡ºå½“å‰ç”¨æˆ·ï¼ŒæˆåŠŸè¿”å›ture å¦åˆ™è¿”å›false
     public function user_login_out(){
-        //Çå³ısession
-        //Çå³ıcookie
+        //æ¸…é™¤session
+        //æ¸…é™¤cookie
         session_unset();
         if(isset($_COOKIE[session_name()])){
             setcookie(session_name(),'',time()-3600);
@@ -56,17 +56,17 @@ class user
         return true;
     }
 
-    //»ñÈ¡µ±Ç°µÇÂ½ÓÃ»§ĞÅÏ¢
+    //è·å–å½“å‰ç™»é™†ç”¨æˆ·ä¿¡æ¯
     public function user_get_login(){
-        //·µ»ØÓÃ»§Êı¾İ
+        //è¿”å›ç”¨æˆ·æ•°æ®
         $tmp = array($this->ret,$this->userid,$this->name,$this->sex,$this->imgs);
         $tmp = json_encode($tmp);
         return $tmp;
     }
 
-    //»ñÈ¡¸öÈË×ÊÁÏĞÅÏ¢
+    //è·å–ä¸ªäººèµ„æ–™ä¿¡æ¯
     public function user_getinfo($userid){
-        //Í¨¹ıÊı¾İ¿â²éÑ¯ÓÃ»§Êı¾İ
+        //é€šè¿‡æ•°æ®åº“æŸ¥è¯¢ç”¨æˆ·æ•°æ®
         //get_userinfo
         $result = $this->db->get_userinfo($userid);
         if ($result){
@@ -79,7 +79,7 @@ class user
         }
     }
 
-    //»ñÈ¡ÓÃ»§È¨ÏŞ£¬·µ»ØÊı¾İ±íÖĞ±êÊ¶È¨ÏŞµÄ×Ö¶ÎËù¶ÔÓ¦µÄÖµ
+    //è·å–ç”¨æˆ·æƒé™ï¼Œè¿”å›æ•°æ®è¡¨ä¸­æ ‡è¯†æƒé™çš„å­—æ®µæ‰€å¯¹åº”çš„å€¼
     public function user_get_privilege($user_id){
         $result = $this->db->get_userinfo($user_id);
         if ($result){
