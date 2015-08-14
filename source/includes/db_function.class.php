@@ -1,7 +1,7 @@
 <?php
 
 require_once 'db.class.php';
-header('content-type:text/html;charset=utf-8');
+
 class db_sql_functions
 {
 	private $dbconn;
@@ -37,18 +37,6 @@ class db_sql_functions
 		return $re;
 	}
 
-	/*
-	* 获取问题详情
-	* 参数：question_id
-	* 返回值：(array) title、content、tags、uid、ctime
-	*/
-	public function get_question_detial($question_id){
-		$sql = "select title, content, tags, uid, gmt_create_time as ctime from app_faq_question where qid='$question_id'";
-		$re = $dbconn->query($sql);
-		
-		return $re;
-    }
-    
 	/*
 	* 获取问题正文
 	* 参数：question_id
@@ -241,7 +229,6 @@ class db_sql_functions
 		}
 
 	}
-	
 
 	/*
 	* 获取“赞”和“踩”人数
@@ -280,7 +267,7 @@ class db_sql_functions
 			return false;
 		}
 	}
-	
+
 	/*
 	* 删除“赞”或“踩”
 	* 参数：answer_id, user_id, action(0踩,1赞)
@@ -337,7 +324,6 @@ class db_sql_functions
 
 		return $re;
 	}
-	
 
 	/*
 	* 添加关注
@@ -400,6 +386,7 @@ class db_sql_functions
 	}
 
 
+	/************************************/
 	/*
 	* 添加通知
 	* 参数：user_id, content, link
@@ -443,13 +430,13 @@ class db_sql_functions
 		return $re;
 	}
 
-	//////////////////////////////////////////////////////////////////////////////
+
 	/*
 	* 通知符合条件的人
 	* 参数：question_id
 	* 返回值：userid_lists
 	*/
-	public function notice_all_user()
+	public function notice_all_user($question_id)
 	{
 		$sql = "select uid from app_faq_follow where qid=$question_id";
 		$result = $this->dbconn->query($sql);
@@ -457,7 +444,6 @@ class db_sql_functions
 		return $result;
 	}
 
-	///////////////////////////////////////////////////////////////////////////////
 
 	/*
 	* json 操作
