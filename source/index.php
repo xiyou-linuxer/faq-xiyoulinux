@@ -41,3 +41,10 @@ function get_proper_question()
 
 $quesion_list = get_proper_question();    //question_list 获得的是前端可以展示的20个问题的列表
 
+$smarty->assign('user_is_login' , ' $user_is_login');
+$smarty->assign('user_info' , ' $user_info');
+$smarty->assign('left_tags' , ' $left_tags');
+$smarty->assign('right_rec' , ' $right_rec');
+$smarty->assign('quesion_list' , ' $question_list');
+
+$smarty->display('index.tpl');
