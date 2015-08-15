@@ -12,5 +12,5 @@ if (isset($_SESSION['userid']) || $_SESSION['userid'] == 0){
     $flag = 0;
 }else{
     //登陆了
-    echo $_SESSION['username']." welcome.<img src='".$_SESSION['imgs']."'>";
+    echo $_SESSION['name']." welcome.<img src='".$_SESSION['imgs']."'>";
 }
