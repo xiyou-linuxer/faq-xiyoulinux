@@ -1,7 +1,7 @@
 <?php
 
 require_once 'db.class.php';
-header('content-type:text/html;charset=utf-8');
+
 class db_sql_functions
 {
 	private $dbconn;
@@ -430,13 +430,13 @@ class db_sql_functions
 		return $re;
 	}
 
-	//////////////////////////////////////////////////////////////////////////////
+
 	/*
 	* 通知符合条件的人
 	* 参数：question_id
 	* 返回值：userid_lists
 	*/
-	public function notice_all_user()
+	public function notice_all_user($question_id)
 	{
 		$sql = "select uid from app_faq_follow where qid=$question_id";
 		$result = $this->dbconn->query($sql);
@@ -444,7 +444,6 @@ class db_sql_functions
 		return $result;
 	}
 
-	///////////////////////////////////////////////////////////////////////////////
 
 	/*
 	* json 操作

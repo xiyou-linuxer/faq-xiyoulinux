@@ -5,7 +5,7 @@
  * Date: 15-8-2
  * Time: 下午2:11
  */
-
+session_start();
 if (isset($_SESSION['userid']) || $_SESSION['userid'] == 0){
     //用户没有登陆
     echo "<a href='login.php'><img src='../imgs/qqoauth_230.png' alt='使用QQ登陆'></a>";

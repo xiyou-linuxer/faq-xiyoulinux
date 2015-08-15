@@ -6,7 +6,8 @@
  * Time: 下午8:00
  */
 
-    require_once '../config/oauth.config.php';
+session_start();
+
     require_once '../includes/oauth.class.php';
     require_once "../includes/db_function.class.php";
 
