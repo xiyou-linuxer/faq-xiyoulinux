@@ -6,8 +6,8 @@
  * Time: 下午3:28
  */
 
-require_once  './init.php';
-
+require_once "init.php";
+require_once  './includes/show.function.php';
 
 /*右上角用户信息部分*/
 $user_is_login = get_user_status();    //user_is_login 为0表示已经登录,否则表示没有登录
@@ -41,6 +41,7 @@ function get_proper_question()
 
 $quesion_list = get_proper_question();    //question_list 获得的是前端可以展示的20个问题的列表
 
+
 $smarty->assign('user_is_login' , ' $user_is_login');
 $smarty->assign('user_info' , ' $user_info');
 $smarty->assign('left_tags' , ' $left_tags');
@@ -48,3 +49,10 @@ $smarty->assign('right_rec' , ' $right_rec');
 $smarty->assign('quesion_list' , ' $question_list');
 
 $smarty->display('index.tpl');
+
+echo $user_is_login;
+
+var_dump($user_info);
+var_dump($left_tags);
+var_dump($right_rec);
+//echo $quesion_list;
