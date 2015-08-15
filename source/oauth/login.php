@@ -17,7 +17,7 @@ session_start();
 
     //先判断是不是需要登录
     //如果用户不需要登录，就跳回主页
-    if (isset($_SESSION['userid']) && ($_SESSION['userid'] != 0)){
+    if (isset($_SESSION['userid']) || ($_SESSION['userid'] != 0)){
         //跳回主页
         header("Location:/");
         exit;
