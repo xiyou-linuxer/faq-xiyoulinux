@@ -6,40 +6,55 @@
  * Time: 下午8:00
  */
 
-    include '../config/oauth.config.php';
-    include '../includes/oauth.class.php';
+session_start();
+
+    require_once '../includes/oauth.class.php';
+    require_once "../includes/db_function.class.php";
+
     $t = new oauth();
 
     echo '<pre>';
+
+    //先判断是不是需要登录
+    //如果用户不需要登录，就跳回主页
+    if (isset($_SESSION['userid']) && ($_SESSION['userid'] != 0)){
+        //跳回主页
+        header("Location:/");
+        exit;
+    }
+
+    //QQ用户登录信息页面，用于QQ登录
     if($_GET['state']){
+        //登录回调，获取信息
         $token = $t->qq_callback();
         $openid = $t->qq_openid($token);
         $tmp = $t->get_user_info($token,$openid);
-echo <<<EOT
-<html>
-	<head>
-		<title>{$tmp['nickname']}</title>
-	</head>
-	<body>
-	    <div>
-		<fieldset>
-			<legend>{$tmp['nickname']}</legend>
-<img src="{$tmp['figureurl']}" /><br />
-性别：{$tmp['gender']}<br />
-城市：{$tmp['province']}·{$tmp['city']}<br />
-出生年：{$tmp['year']}<br />
-		</fieldset>
-            <fieldset>
-			<legend>DEBUG INFO</legend>
-token：{$token}<br />
-openid：{$openid}<br />
-		</fieldset>
-		</div>
-	</body>
-</html>
-EOT;
-        var_dump($tmp);
+        switch($tmp['gender']){
+            case "男":
+                $sex = 1;
+                break;
+            case "女":
+                $sex = 0;
+                break;
+            default:
+                $sex = -1;
+        }
+        $db = new db_sql_functions();
+        $userid = $db->update_userinfo($openid,$tmp['nickname'],'$sex',$tmp['figureurl_qq_1']);
+        if ($userid < 0){
+            //失败
+            header("Location:/");
+            exit;
+        }
+        //登录成功，写入session
+        $_SESSION['userid'] = $userid;
+        $_SESSION['name'] = $tmp['nickname'];
+        $_SESSION['sex'] = $sex;
+        $_SESSION['imgs'] = $tmp['figureurl_qq_1'];
+        header("Location:/");
+        exit;
     }else{
+        //未登录或者已经登录
         $t->qq_login();
     }
 ?>
