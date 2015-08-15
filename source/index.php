@@ -33,14 +33,17 @@ function get_proper_question()
     do{
         $get = $db_function->get_question_list($i, 20);
         if($get != null) {
-            $result = array_merge($result, $get);
-        }
-        foreach ($result as $question) {
-            if ((($db_function->get_question_status($question['qid']) >> 1) & 1) == 1) {
-                array_slice($result, $question, 1);
+            foreach ($get as $key=>$question) {
+                if ((((int)$db_function->get_question_status($question['qid'])) & 1) == 1) {
+                    unset($get[$key]);
+
+                }
             }
+            $result = array_merge($result, $get);
+            $i += 20;
+        } else {
+            break;
         }
-        $i += 20;
     } while (count($result) <= 20) ;
     $result = array_slice($result ,0, 20);
     return $result;
