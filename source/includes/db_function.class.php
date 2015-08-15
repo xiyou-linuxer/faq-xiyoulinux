@@ -250,26 +250,26 @@ class db_sql_functions
     /*
     * 获取“赞”和“踩”人数
     * 参数：answer_id
-    * 返回值：(array) 下标agree表示“赞”数目，disagree表示“踩”数目
+    * 返回值：(array) 下标vote_a表示“赞”数目，vote_d表示“踩”数目
     */
     public function get_votenum($answer_id)
     {
-        $sql = "select vote from app_faq_answer where aid='$answer_id'";
+        $sql = "select vote from app_faq_answer where aid=$answer_id";
         $re = $this->dbconn->query($sql);
-        $result = $re->fetch_assoc();
-        $re = $result['vote'];
+        $row = $re->fetch_assoc();
+        $json = $row['vote'];
 
-        $arr = json_decode($re, true);
-        $count_y = 0;
-        $count_n = 0;
+        $count_a = 0;
+        $count_d = 0;
 
-        foreach ($arr as $key => $value) {
-
-            if ($value == 1) $count_y++;
-            else $count_n++;
+        $arr = json_decode($json, true);
+        for ($i = 0; $i < count($arr); $i++) {
+            foreach ($arr[$i] as $key => $value) {
+                if ($value == 1) $count_a ++;
+                else $count_d ++;
+            }
         }
-
-        return array('agree' => $count_y, 'disagree' => $count_n);
+        return array('vote_a' => $count_a, 'vote_d' => $count_d);
     }
 
     /*
@@ -284,53 +284,54 @@ class db_sql_functions
         $row = $re->fetch_assoc();
         $json = $row['vote'];
 
-        if($json != 'no'){
+        if($json != 'no') { //vote为空时
             $arr = json_decode($json, true);
-            //return $arr;
-            foreach ($arr as $value) {
-                echo $value;
-                //if ($key == $self_id)
-                //    return false;
+            for ($i = 0; $i < count($arr); $i++) {
+                foreach ($arr[$i] as $key => $value) {
+                    if ($key == $self_id)
+                        return false;
+                }
             }
+        }
+        $add_vote = array($self_id => $action);
+        array_push($arr, $add_vote);
+        $json = json_encode($arr);
+        $sql = "update app_faq_answer set vote='$json' where aid=$answer_id and uid=$user_id";
+        $this->dbconn->query($sql);
 
-            //$add_vote = array($self_id => $action);
-            //array_push($arr, $add_vote);
-            //$json = json_encode($arr);
-            return '<br>';
-
-
-        }else {
-            //未查找到用户,则添加
-            return "2";
-//            $arr = array();
-//            $add_vote = array($self_id => $action);
-//            array_push($arr, $add_vote);
-//            return $arr;
-//            $json = json_encode($arr);
-//
-//            $sql = "update app_faq_answer set vote='$json' where aid=$answer_id and uid=$user_id";
-//            $this->dbconn->query($sql);
-//
-//            return true;
-       }
+        return true;
     }
 
 	/*
 	* 删除“赞”或“踩”
-	* 参数：answer_id, user_id, action(0踩,1赞)
+	* 参数：answer_id, user_id
 	* 返回值：(bool) 成功：true, 失败：false
 	*/
-	public function delete_answer_vote($answer_id, $user_id, $action)
+	public function delete_answer_vote($answer_id, $user_id, $self_id)
 	{
-		$sql = "select vote from app_faq_answer where aid='$answer_id' and uid ='$user_id'";
-		$re = $this->dbconn->query($sql);
-		$result = $this->json_vote($answer_id, $user_id, $action, 0);
+        $sql = "select vote from app_faq_answer where aid=$answer_id and uid =$user_id";
+        $re = $this->dbconn->query($sql);
+        $row = $re->fetch_assoc();
+        $json = $row['vote'];
 
-		if ($result) {
-			return true;
-		} else {
-			return false;
-		}
+        if($json == 'no') {  //vote为空时
+            return false;
+        }else{
+            $arr = json_decode($json, true);
+            for ($i = 0; $i < count($arr); $i++) {
+                foreach ($arr[$i] as $key => $value) {
+                    if ($key == $self_id) { //delete
+                        unset($arr[$i]);
+                        $json = json_encode($arr);
+                        $sql = "update app_faq_answer set vote='$json' where aid=$answer_id and uid=$user_id";
+                        $this->dbconn->query($sql);
+
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 	}
 
 	/*
@@ -509,55 +510,6 @@ class db_sql_functions
             return $rows;
         else
             return false;
-	}
-
-
-	/*
-	* json 操作
-	* 参数：answer_id, user_id, action, flag
-    * 返回值：(bool) 成功：true, 失败：false
-    * 说明：flag为1,表示add，反之，为del
-	*/
-	public function json_vote($answer_id, $user_id, $action, $flag)
-	{
-		$sql = "select vote from app_faq_answer where aid=$answer_id and uid =$user_id";
-		$re = $this->dbconn->query($sql);
-        $row = $re->fetch_assoc();
-        $re = $row['vote'];
-
-		$arr = json_decode($re, true);
-		foreach ($arr as $key => $value) {
-
-			if ($key == $user_id) {
-
-				if ($flag) {  //找到key && flag == 1,即添加失败
-
-					return false;
-				} else {  //找到key && flag == 0,进行删除操作
-
-					unset($arr[$key]);
-					$json = json_encode($arr);
-					$sql = "update app_faq_answer set vote='$json' where aid=$answer_id and uid=$user_id";
-					$this->dbconn->query($sql);
-
-					return true;
-				}
-
-			}
-		}
-		if ($flag) {  //未找到key && flag == 1,则添加
-
-			$add_vote = array($user_id => $action);
-			array_push($arr, $add_vote);
-			$json = json_encode($arr);
-			$sql = "update app_faq_answer set vote='$json' where aid=$answer_id and uid=$user_id";
-			$this->dbconn->query($sql);
-
-			return true;
-		} else {  //未找到key && flag == 0,即删除失败
-
-			return false;
-		}
 	}
 
 	/**
