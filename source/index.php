@@ -7,11 +7,14 @@
  */
 
 require_once "init.php";
-require_once  './includes/show.function.php';
+require_once "includes/show.function.php";
+
+$user = new user();
 
 /*右上角用户信息部分*/
-$user_is_login = get_user_status();    //user_is_login 为0表示已经登录,否则表示没有登录
-$user_info = get_user_info();     //user_info存储用户的相关信息,是一个array
+$user_info= json_decode($user->user_get_login(),true); //获得用户登录的json,包含了用户的所有信息
+$is_login = $user_info['ret'];   //is_login 用来标记用户是否登录,如果用户登录,赋值为0, 如果用户没有登录,赋值为非0
+
 
 
 /*左侧标签部分*/
@@ -26,24 +29,27 @@ function get_proper_question()
 {
     $db_function = new db_sql_functions();  //获取数据库连接
     $i = 0;
-    do {
-        array_push($result,$db_function->get_question_list($i , 20) );
-        foreach ($result as $temp) {
-            if ((($db_function->get_question_status($temp['qid']) >> 1) & 1) == 1) {
-                array_slice($result, $temp, 1);
+    $result = array();
+    do{
+        $get = $db_function->get_question_list($i, 20);
+        if($get != null) {
+            $result = array_merge($result, $get);
+        }
+        foreach ($result as $question) {
+            if ((($db_function->get_question_status($question['qid']) >> 1) & 1) == 1) {
+                array_slice($result, $question, 1);
             }
         }
         $i += 20;
-    } while (count($result) <= 20);
-    array_slice($result ,0, 20);
+    } while (count($result) <= 20) ;
+    $result = array_slice($result ,0, 20);
     return $result;
 }
 
 $quesion_list = get_proper_question();    //question_list 获得的是前端可以展示的20个问题的列表
 
-echo $user_is_login;
-
+/*var_dump($is_login);
 var_dump($user_info);
 var_dump($left_tags);
 var_dump($right_rec);
-//echo $quesion_list;
+var_dump($quesion_list);*/
