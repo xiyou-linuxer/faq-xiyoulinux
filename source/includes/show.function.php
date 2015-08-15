@@ -14,9 +14,11 @@
 
 function get_user_status()   //函数返回值为0,说明用户已经登录,否则没有登录
 {
+
     $user = new user();
     $temp = json_decode($user->user_get_login()); //获得用户登录的json
     $is_login = $temp['ret'];   //is_login 用来标记用户是否登录,如果用户登录,赋值为0, 如果用户没有登录,赋值为非0
+
     return $is_login;
 }
 
