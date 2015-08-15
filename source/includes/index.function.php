@@ -7,10 +7,6 @@
  *给首页提供数据的页面
  */
 
-require_once './db_function.class.php';
-require_once './oauth.class.php';
-require_once './user.class.php';
-
 /*给首页提供所有的标签,函数返回所有标签的构成的数组,参数为空
 初步暂定把所有的标签是固定的,返回标签的数组*/
 function get_all_tags() {

@@ -7,7 +7,6 @@
  * Time: 14:30
  */
 
-//require_once "db_function.class.php";
 
 class user
 {
@@ -59,7 +58,7 @@ class user
     //获取当前登陆用户信息
     public function user_get_login(){
         //返回用户数据
-        $tmp = array($this->ret,$this->userid,$this->name,$this->sex,$this->imgs);
+        $tmp = array("ret"=>$this->ret,"userid"=>$this->userid,"name"=>$this->name,"sex"=>$this->sex,"imgs"=>$this->imgs);
         $tmp = json_encode($tmp);
         return $tmp;
     }
@@ -67,7 +66,7 @@ class user
     //获取个人资料信息
     public function user_getinfo($userid){
         //通过数据库查询用户数据
-        //get_userinfo
+        get_userinfo
         $result = $this->db->get_userinfo($userid);
         if ($result){
             $tmp = array("ret"=>"0");

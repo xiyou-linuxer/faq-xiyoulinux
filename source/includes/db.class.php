@@ -6,7 +6,7 @@
  * Time: 下午9:54
  */
 
-require_once "../config/db.config.php";
+
 
 class db {
     //数据库连接信息
