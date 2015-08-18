@@ -24,3 +24,7 @@ $left_tags = get_left_tags();    //left_tags 存储的是左侧标签的数组
 $right_rec = get_right_rec();     //right_rec 存储的是右侧推荐的集合
 
 
+$smarty->assign('user_is_login' ,'$user_is_login');
+$smarty->assign('user_info','user_info');
+
+$smarty->display('cs_pro.tpl');

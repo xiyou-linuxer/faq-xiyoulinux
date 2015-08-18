@@ -26,3 +26,6 @@ $key_word = $_GET['search']; //定义前端通过GET请求传过来的参数为s
 
 /*获取查询结果*/
 $qustion_result_title =  $db_function->search_question_title($key_word);   //返回模糊搜索问题的集合
+
+$smarty->assign('qustion_result_title', '$qustion_result_title');
+$smarty->display("info_pro.tpl");

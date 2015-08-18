@@ -27,7 +27,7 @@ if($detial['status'] == 1){
     $answers = $db->get_answer_lists($qid);
     $smarty->assign('answers', $answers);
     
-    $smarty->display('question.tpl');
+    $smarty->display('info_pro.tpl');
 }
 
 ?>
