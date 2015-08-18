@@ -6,6 +6,8 @@
  * Time: 下午9:54
  */
 
+
+
 class db {
     //数据库连接信息
     private $db;
