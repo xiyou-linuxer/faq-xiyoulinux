@@ -204,16 +204,18 @@ class db_sql_functions
 
     /****************************/
     /*
-    * 获取回复内容
+    * 获取回复内容列表
     * 参数：question_id
-    * 返回值：(answer_lists) content, uid, vote, time
+    * 返回值：(answer_lists) content, uid, (array) vote, time
     */
-    public function get_answer_comment($question_id)
+    public function get_answer_lists($question_id)
     {
-        $sql = "select content, uid, vote, gmt_create_time as time from app_faq_answer where qid='$question_id'";
+        $sql = "select aid, content, uid, vote, gmt_create_time as ctime from app_faq_answer where qid='$question_id'";
         $re = $this->dbconn->query($sql);
         $rows = array();
         while ($row = $re->fetch_assoc()) {
+
+            $row['vote'] = $this->get_votenum($row['aid']);
             array_push($rows, $row);
         }
 

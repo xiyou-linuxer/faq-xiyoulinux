@@ -12,7 +12,6 @@ $u = new user();
 $user = $u->user_get_login();
 $smarty->assgin('islogin', $user);
 
-
 $qid = $_GET['q'];
 
 $db = new db_sql_functions();
