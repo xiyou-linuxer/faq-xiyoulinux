@@ -6,17 +6,16 @@
 	 * 			$answers(aid, uid, content, vote, ctime)
 	 */
 	 
-require_once 'include/user.class.php';
-require_once 'include/errshow.class.php';
-require_once 'includes/db_function.class.php';
+require_once "init.php";
 
 $u = new user();
 $user = $u->user_get_login();
 $smarty->assgin('islogin', $user);
 
+
 $qid = $_GET['q'];
 
-$db = new Db_functions();
+$db = new db_sql_functions();
 $err = new Errshow();
 $detial = $db->get_question_detial($qid);
 if($detial['status'] == 1){
